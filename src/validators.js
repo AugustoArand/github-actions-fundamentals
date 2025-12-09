@@ -14,7 +14,10 @@ function isValidEmail(email) {
  * @returns {boolean} True se não estiver vazia
  */
 function isNotEmpty(str) {
-  if (str === null || str === undefined) {
+  if (str === null || str === undefined || str === '') {
+    return false;
+  }
+  if (typeof str !== 'string') {
     return false;
   }
   return str.trim().length > 0;
