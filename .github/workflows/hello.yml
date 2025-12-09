@@ -1,12 +1,51 @@
-name: Hello Github Actions
+name: Fundamentos de GitHub Actions - JEST
 
 on:
     push:
         branches:
-        - main
+            - main
+    pull_request:
+        branches:
+            - main
+
 jobs:
-    say-hello:
+    test:
+        name: Run Tests
         runs-on: ubuntu-latest
+
         steps:
-        - name: Say Hello
-          run: echo "Github actions funcionando!"
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "18"
+                  cache: "npm"
+
+            - name: Instalando Dependências
+              run: npm ci
+
+            - name: Rodando Testes
+              run: npm test
+
+            - name: Rodando Testes com Cobertura
+              run: npm run test:coverage
+
+            - name: Enviando relatórios de cobertura
+              uses: codecov/codecov-action@v4
+              with:
+                  files: ./coverage/lcov.info
+                  fail_ci_if_error: false
+
+    build:
+        name: Build Check
+        runs-on: ubuntu-latest
+        needs: test
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Build success message
+              run: echo "✅ Todos os testes passaram! Build OK!"
